@@ -1,0 +1,274 @@
+﻿/* Import fonts once, e.g. in wwwroot/index.html or App.razor <head>:
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+*/
+
+.sc-page {
+    --umber: #2B2420;
+    --sand: #F7F2EA;
+    --sand-deep: #EFE6D6;
+    --clay: #C1440E;
+    --clay-deep: #9C3609;
+    --olive: #5C6B3F;
+    --brass: #B08D57;
+    --line: #DDD1BA;
+    --white: #FFFDF9;
+    background: var(--sand);
+    color: var(--umber);
+    font-family: 'Work Sans', sans-serif;
+    min-height: 100vh;
+}
+
+/* ---------- Header ---------- */
+.sc-header {
+    padding: 22px 48px;
+    background: var(--sand);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sc-logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+}
+
+.sc-logo-dot {
+    color: var(--clay);
+}
+
+.sc-nav-link {
+    color: var(--umber) !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+    .sc-nav-link:hover {
+        color: var(--clay) !important;
+    }
+
+/* ---------- Hero ---------- */
+.sc-hero {
+    padding: 72px 48px 40px;
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+.sc-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 14px;
+}
+
+.sc-title {
+    font-family: 'Fraunces', serif !important;
+    font-weight: 600 !important;
+    font-size: clamp(2.4rem, 5vw, 4.2rem) !important;
+    line-height: 1.02 !important;
+    margin: 0 0 16px !important;
+    letter-spacing: -0.01em;
+    color: var(--umber) !important;
+}
+
+.sc-sub {
+    font-size: 1.05rem;
+    color: #5A5148;
+    max-width: 520px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ---------- Grid ---------- */
+.sc-grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px 48px 100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 32px;
+}
+
+.sc-card {
+    background: var(--white) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 4px !important;
+    overflow: hidden;
+    padding: 0 !important;
+    transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+    .sc-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 34px -18px rgba(43,36,32,0.35);
+        cursor: pointer;
+    }
+
+.sc-card-media {
+    aspect-ratio: 1/1;
+    background: linear-gradient(160deg, var(--sand-deep), var(--sand) 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+}
+
+    .sc-card-media svg {
+        width: 58%;
+        height: 58%;
+    }
+
+.sc-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sc-icon-muted {
+    filter: grayscale(0.5);
+    opacity: 0.7;
+}
+
+.sc-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: -4px;
+}
+
+.sc-badge {
+    position: absolute !important;
+    top: 14px;
+    left: 14px;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--umber) !important;
+    color: var(--sand) !important;
+    padding: 5px 9px !important;
+    border-radius: 2px !important;
+}
+
+.sc-badge-low {
+    background: var(--clay) !important;
+}
+
+.sc-card-body {
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.sc-card-name {
+    font-family: 'Fraunces', serif !important;
+    font-weight: 600 !important;
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+    color: var(--umber) !important;
+}
+
+.sc-card-desc {
+    font-size: 0.85rem;
+    color: #7A7166;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Signature: stitched leather price tag */
+.sc-tag {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--brass);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sc-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--umber);
+}
+
+    .sc-price small {
+        display: block;
+        font-size: 0.65rem;
+        color: #9A9186;
+        font-weight: 400;
+        letter-spacing: 0.05em;
+    }
+
+.sc-stock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sc-stock-in {
+    color: var(--olive);
+}
+
+.sc-stock-out {
+    color: #B5453A;
+}
+
+.sc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.sc-btn {
+    width: 100% !important;
+    margin-top: 6px;
+    background: var(--umber) !important;
+    border: none !important;
+    border-radius: 2px !important;
+    font-family: 'Work Sans', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.02em;
+}
+
+    .sc-btn:hover:not(:disabled) {
+        background: var(--clay-deep) !important;
+    }
+
+    .sc-btn:disabled {
+        background: #E4DCCB !important;
+        color: #A79E8F !important;
+    }
+
+@media (max-width: 640px) {
+    .sc-header, .sc-hero, .sc-grid {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sc-card {
+        transition: none;
+    }
+}

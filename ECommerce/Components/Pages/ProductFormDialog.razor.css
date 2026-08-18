@@ -1,0 +1,572 @@
+﻿/* ================================================================
+   Product Form Dialog — Comfy Wear Theme
+   Palette: olive #33422E | marigold #D98E2B | ink #221F1A
+   ================================================================ */
+.pf-form {
+    --brand: #11346f;
+    --brand-hover: #221F1A;
+    --accent: #D98E2B;
+    --ink: #221F1A;
+    --muted: #8A8272;
+    --border: #E4E0D8;
+    --bg: #FBF7F1;
+    --bg-alt: #F3EDE4;
+    --danger: #C1440E;
+    --success: #2E9E5B;
+    font-family: 'Poppins', -apple-system, sans-serif;
+    color: var(--ink);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+/* ---------- Scrollable body ---------- */
+.pf-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ---------- Header ---------- */
+.pf-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.pf-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--brand);
+    color: #FBF7F1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pf-header-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+}
+
+.pf-header-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 2px 0 0;
+}
+
+.pf-divider {
+    height: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+}
+
+/* ---------- Row layouts ---------- */
+.pf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.pf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pf-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+}
+
+.pf-hint {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.pf-required {
+    color: var(--danger);
+}
+
+/* ---------- Inputs ---------- */
+.pf-input {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pf-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(217, 142, 43, 0.1);
+}
+
+.pf-input::placeholder {
+    color: #b5b0a8;
+}
+
+.pf-input-error {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.08) !important;
+}
+
+.pf-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8272' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    cursor: pointer;
+}
+
+.pf-textarea {
+    resize: vertical;
+    min-height: 56px;
+}
+
+.pf-field-error {
+    font-size: 0.72rem;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ---------- Image Gallery ---------- */
+.pf-gallery-section {
+    margin-top: 4px;
+}
+
+.pf-gallery-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ink);
+}
+
+.pf-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.pf-gallery-item {
+    position: relative;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+}
+
+.pf-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pf-gallery-item-existing {
+    opacity: 0.92;
+}
+
+.pf-gallery-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+}
+
+/* always show remove on touch devices */
+@media (hover: none) {
+    .pf-gallery-remove {
+        opacity: 1;
+    }
+}
+
+.pf-gallery-item:hover .pf-gallery-remove {
+    opacity: 1;
+}
+
+.pf-gallery-remove:hover {
+    background: var(--danger);
+}
+
+.pf-gallery-tag {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+}
+
+.pf-gallery-cover-tag {
+    background: var(--accent);
+}
+
+.pf-gallery-existing-tag {
+    background: var(--brand);
+}
+
+.pf-gallery-add {
+    aspect-ratio: 1/1;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.pf-gallery-add:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(217, 142, 43, 0.04);
+}
+
+.pf-gallery-hint {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.pf-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* ---------- Save Error ---------- */
+.pf-save-error {
+    margin: 0 24px;
+    padding: 10px 14px;
+    background: #FDF2EE;
+    border: 1px solid rgba(193, 68, 14, 0.15);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* ---------- Actions (sticky bottom) ---------- */
+.pf-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    flex-shrink: 0;
+}
+
+.pf-btn-cancel,
+.pf-btn-save {
+    padding: 9px 22px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.pf-btn-cancel {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+}
+
+.pf-btn-cancel:hover:not(:disabled) {
+    background: var(--bg-alt);
+    border-color: #ccc;
+}
+
+.pf-btn-save {
+    background: var(--brand);
+    color: #FBF7F1;
+}
+
+.pf-btn-save:hover:not(:disabled) {
+    background: var(--brand-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 31, 26, 0.2);
+}
+
+.pf-btn-cancel:disabled,
+.pf-btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pf-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: pf-spin 0.6s linear infinite;
+}
+
+@keyframes pf-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ================================================================
+   DIALOG TITLEBAR (Radzen override)
+   ================================================================ */
+.product-dialog .rz-dialog-titlebar {
+    background-color: var(--brand) !important;
+    padding: 14px 20px !important;
+}
+
+.product-dialog .rz-dialog-title {
+    color: #FBF7F1 !important;
+    font-family: 'Fredoka', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+.product-dialog .rz-dialog-titlebar-close .rzi {
+    color: rgba(251, 247, 241, 0.7) !important;
+}
+
+.product-dialog .rz-dialog-titlebar-close:hover .rzi {
+    color: #FBF7F1 !important;
+}
+
+/* ================================================================
+   RESPONSIVE — Tablets (<= 768px)
+   ================================================================ */
+@media (max-width: 768px) {
+    .product-dialog {
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .product-dialog .rz-dialog {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .product-dialog .rz-dialog-content {
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .pf-header {
+        padding: 14px 16px;
+    }
+
+    .pf-header-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+    }
+
+    .pf-header-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .pf-header-title {
+        font-size: 1rem;
+    }
+
+    .pf-fields {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .pf-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .pf-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 8px;
+    }
+
+    .pf-save-error {
+        margin: 0 16px;
+    }
+
+    .pf-actions {
+        padding: 12px 16px;
+    }
+
+    .pf-btn-cancel,
+    .pf-btn-save {
+        padding: 10px 18px;
+        font-size: 0.82rem;
+    }
+}
+
+/* ================================================================
+   RESPONSIVE — Mobile (<= 520px)
+   ================================================================ */
+@media (max-width: 520px) {
+    /* Full-screen dialog */
+    .product-dialog {
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-width: 100vw !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .product-dialog .rz-dialog {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100dvh !important;
+    }
+
+    .product-dialog .rz-dialog-content {
+        padding: 0 !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Stack all rows */
+    .pf-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .pf-fields {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .pf-label {
+        font-size: 0.74rem;
+    }
+
+    .pf-input {
+        padding: 10px 12px;
+        font-size: 16px; /* prevents iOS zoom on focus */
+    }
+
+    .pf-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+        gap: 8px;
+    }
+
+    .pf-gallery-add {
+        font-size: 0.62rem;
+    }
+
+    .pf-gallery-add svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Full-width action buttons stacked */
+    .pf-actions {
+        padding: 12px 14px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .pf-btn-cancel,
+    .pf-btn-save {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        min-width: 0;
+    }
+}
+
+/* ================================================================
+   RESPONSIVE — Very small (<= 380px)
+   ================================================================ */
+@media (max-width: 380px) {
+    .pf-header {
+        padding: 12px 12px;
+        gap: 10px;
+    }
+
+    .pf-header-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .pf-header-title {
+        font-size: 0.92rem;
+    }
+
+    .pf-header-sub {
+        font-size: 0.68rem;
+    }
+
+    .pf-fields {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .pf-gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

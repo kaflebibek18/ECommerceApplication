@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView>
+    <Authorized>
+        <div class="auth-status">
+            <span class="auth-greeting">
+                Hi, <strong>@context.User.Identity?.Name</strong>
+            </span>
+            <form method="post" action="/Account/Logout" class="auth-logout-form">
+                <button type="submit" class="auth-logout-btn">Logout</button>
+            </form>
+            <a href="admin/products" class="auth-login-btn">Go to Products</a>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/login" class="auth-login-btn">Login</a>
+    </NotAuthorized>
+</AuthorizeView>

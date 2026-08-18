@@ -1,0 +1,56 @@
+﻿@page "/login"
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Authorization
+
+<div class="lg-page">
+    <div class="lg-card">
+        <div class="lg-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+        </div>
+
+        <h1 class="lg-title">Admin Login</h1>
+        <p class="lg-subtitle">Sign in to manage products</p>
+
+        @if (HasError)
+        {
+            <div class="lg-error">Invalid username or password.</div>
+        }
+
+        <form method="post" action="/Account/Login" class="lg-form">
+            <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
+            <div class="lg-field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" autocomplete="username" required />
+            </div>
+
+            <div class="lg-field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </div>
+
+            <button type="submit" class="lg-submit">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrlParam { get; set; }
+
+    private bool HasError => Error == "1";
+    private string ReturnUrl => string.IsNullOrWhiteSpace(ReturnUrlParam) ? "/admin/products" : ReturnUrlParam;
+}

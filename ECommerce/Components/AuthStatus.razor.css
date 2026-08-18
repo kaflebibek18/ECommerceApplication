@@ -1,0 +1,47 @@
+﻿.auth-status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #fff;
+    font-size: 0.85rem;
+}
+
+.auth-greeting strong {
+    font-weight: 700;
+}
+
+.auth-logout-form {
+    margin: 0;
+}
+
+.auth-logout-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+    .auth-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.28);
+    }
+
+.auth-login-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s ease;
+}
+
+    .auth-login-btn:hover {
+        background: rgba(255, 255, 255, 0.28);
+    }

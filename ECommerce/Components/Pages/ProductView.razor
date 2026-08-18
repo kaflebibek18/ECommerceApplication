@@ -1,0 +1,169 @@
+﻿@page "/sandals"
+@using Radzen
+@using Radzen.Blazor
+@using ECommerce.ViewModel
+
+<div class="sc-page">
+
+
+
+    <div class="sc-hero">
+        <div class="sc-eyebrow">Footwear / Leather Goods</div>
+        <RadzenText TextStyle="TextStyle.DisplayH1" class="sc-title">
+            Sandals<br />Collection
+        </RadzenText>
+        <p class="sc-sub">Full-grain leather, hand-stitched soles, built to break in — not break down.</p>
+    </div>
+
+    <div class="sc-grid">
+        @foreach (var product in Products)
+        {
+            <RadzenCard class="sc-card">
+                <div class="sc-card-media">
+                    @if (!string.IsNullOrEmpty(product.Badge))
+                    {
+                        <RadzenBadge Text="@product.Badge"
+                                     class="@("sc-badge" + (product.BadgeIsUrgent ? " sc-badge-low" : ""))" />
+                    }
+                    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"
+                         class="@(!product.InStock ? "sc-icon-muted" : "")">
+                        <path d="@product.IconPath" fill="@product.AccentColor" opacity="0.85" />
+                        <ellipse cx="60" cy="76" rx="38" ry="8" fill="#2B2420" opacity="0.15" />
+                    </svg>
+                </div>
+
+                <div class="sc-card-body">
+                    <RadzenText TextStyle="TextStyle.H6" class="sc-card-name">@product.Name</RadzenText>
+                    <p class="sc-card-desc">@product.Description</p>
+
+                    <div class="sc-tag">
+                        <div class="sc-price">
+                            Rs. @product.Price.ToString("N0")
+                            <small>MRP incl. tax</small>
+                        </div>
+                        <div class="@("sc-stock " + (product.InStock ? "sc-stock-in" : "sc-stock-out"))">
+                            <span class="sc-dot"></span>
+                            @(product.InStock ? "In Stock" : "Out of Stock")
+                        </div>
+                    </div>
+
+                    <RadzenButton Text="@(product.InStock ? "Add to Cart" : "Notify Me")"
+                                  Disabled="@(!product.InStock)"
+                                  Click="@(() => OnAddToCart(product))"
+                                  class="sc-btn"
+                                  ButtonStyle="ButtonStyle.Dark" />
+                </div>
+            </RadzenCard>
+        }
+    </div>
+
+</div>
+
+@code {
+    private List<ProductViewModel> Products = new()
+    {
+        new ProductViewModel
+        {
+            Name = "Classic Leather Sandal",
+            Description = "Tan full-grain upper, molded EVA sole for all-day wear.",
+            Price = 1499,
+            InStock = true,
+            Badge = "Bestseller",
+            AccentColor = "#B08D57",
+            IconPath = "M20 78 Q20 60 40 58 L82 55 Q98 55 98 70 Q98 84 82 86 L34 90 Q20 90 20 78 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Woven Strap Sandal",
+            Description = "Hand-braided vamp strap with a cushioned arch support footbed.",
+            Price = 1799,
+            InStock = true,
+            AccentColor = "#5C6B3F",
+            IconPath = "M18 76 Q18 58 38 56 L84 54 Q100 54 100 68 Q100 82 84 84 L32 88 Q18 88 18 76 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Buckle Trek Sandal",
+            Description = "Adjustable brass buckle, rugged lugged outsole for uneven ground.",
+            Price = 2150,
+            InStock = true,
+            Badge = "Only 2 left",
+            BadgeIsUrgent = true,
+            AccentColor = "#C1440E",
+            IconPath = "M22 80 Q22 62 42 60 L80 57 Q96 57 96 71 Q96 85 80 87 L36 91 Q22 91 22 80 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Minimalist Slide",
+            Description = "Single-strap suede slide, low-profile contoured base.",
+            Price = 1299,
+            InStock = false,
+            AccentColor = "#8A8272",
+            IconPath = "M20 78 Q20 60 40 58 L82 55 Q98 55 98 70 Q98 84 82 86 L34 90 Q20 90 20 78 Z"
+        },  new ProductViewModel
+        {
+            Name = "Woven Strap Sandal",
+            Description = "Hand-braided vamp strap with a cushioned arch support footbed.",
+            Price = 1799,
+            InStock = true,
+            AccentColor = "#5C6B3F",
+            IconPath = "M18 76 Q18 58 38 56 L84 54 Q100 54 100 68 Q100 82 84 84 L32 88 Q18 88 18 76 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Buckle Trek Sandal",
+            Description = "Adjustable brass buckle, rugged lugged outsole for uneven ground.",
+            Price = 2150,
+            InStock = true,
+            Badge = "Only 2 left",
+            BadgeIsUrgent = true,
+            AccentColor = "#C1440E",
+            IconPath = "M22 80 Q22 62 42 60 L80 57 Q96 57 96 71 Q96 85 80 87 L36 91 Q22 91 22 80 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Minimalist Slide",
+            Description = "Single-strap suede slide, low-profile contoured base.",
+            Price = 1299,
+            InStock = false,
+            AccentColor = "#8A8272",
+            IconPath = "M20 78 Q20 60 40 58 L82 55 Q98 55 98 70 Q98 84 82 86 L34 90 Q20 90 20 78 Z"
+        },
+          new ProductViewModel
+        {
+            Name = "Woven Strap Sandal",
+            Description = "Hand-braided vamp strap with a cushioned arch support footbed.",
+            Price = 1799,
+            InStock = true,
+            AccentColor = "#5C6B3F",
+            IconPath = "M18 76 Q18 58 38 56 L84 54 Q100 54 100 68 Q100 82 84 84 L32 88 Q18 88 18 76 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Buckle Trek Sandal",
+            Description = "Adjustable brass buckle, rugged lugged outsole for uneven ground.",
+            Price = 2150,
+            InStock = true,
+            Badge = "Only 2 left",
+            BadgeIsUrgent = true,
+            AccentColor = "#C1440E",
+            IconPath = "M22 80 Q22 62 42 60 L80 57 Q96 57 96 71 Q96 85 80 87 L36 91 Q22 91 22 80 Z"
+        },
+        new ProductViewModel
+        {
+            Name = "Minimalist Slide",
+            Description = "Single-strap suede slide, low-profile contoured base.",
+            Price = 1299,
+            InStock = false,
+            AccentColor = "#8A8272",
+            IconPath = "M20 78 Q20 60 40 58 L82 55 Q98 55 98 70 Q98 84 82 86 L34 90 Q20 90 20 78 Z"
+        }
+    };
+
+    private void OnAddToCart(ProductViewModel product)
+    {
+        // Wire this into your CartService
+        // await CartService.AddAsync(product);
+    }
+}
+

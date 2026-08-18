@@ -1,0 +1,234 @@
+﻿@page "/admin/products"
+@using ECommerce.Entities
+@using ECommerce.ViewModel
+@using ECommerce.Services
+@inject IProductService ProductService
+@inject IStyleService StyleService
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+@inject IJSRuntime JS
+@attribute [Authorize]
+<header class="site-header">
+    <div class="site-header-inner">
+        <div class="site-header-left">
+            <a href="/" class="site-logo">
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                </a>
+                <p style="color:white;margin-top: 15px;">comfy wear</p>
+            </a>
+        </div>
+        <div class="site-header-right">
+            @* <span class="site-admin-badge">Admin</span> *@
+            <AuthStatus />
+        </div>
+    </div>
+</header>
+<div class="ap-page">
+
+    <div class="ap-header">
+        <div>
+            <h1 class="ap-title">Products</h1>
+            <p class="ap-subtitle">@products.Count product@(products.Count == 1 ? "" : "s") in catalog</p>
+        </div>
+        <a href="/" class="cp-back-btn">Back</a>
+    </div>
+
+    <div class="ap-toolbar">
+        <input class="ap-search" placeholder="Search by name or brand..."
+               @bind="SearchTerm" @bind:event="oninput" />
+        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" Style="background-color:#11346f !important" />
+    </div>
+
+    @if (Loading)
+    {
+        <div class="ap-loading">Loading products…</div>
+    }
+    else
+    {
+        <div class="ap-table-wrap">
+            <table class="ap-table">
+                <thead>
+                    <tr>
+                        <th class="ap-col-img"></th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Style</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th class="ap-col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in FilteredProducts)
+                    {
+                        <tr>
+                            <td class="ap-col-img">
+                                @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                                {
+                                    <img src="@p.ImagePath" alt="@p.Name" class="ap-thumb" />
+                                }
+                                else
+                                {
+                                    <div class="ap-thumb ap-thumb-empty">—</div>
+                                }
+                            </td>
+                            <td>
+                                <div class="ap-name-cell">@p.Name</div>
+                                <div class="ap-sku">SKU-@p.Id.ToString("D4")</div>
+                            </td>
+                            <td><span class="ap-brand-tag">@p.Brand</span></td>
+                            <td><span class="ap-style-tag">@(GetStyleName(p.StyleId))</span></td>
+                            <td class="ap-price">Rs.@p.Price.ToString("N0")</td>
+                            <td>
+                                <span class="@("ap-stock-pill " + (p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
+                                    <span class="ap-dot"></span>@p.StockQuantity
+                                </span>
+                            </td>
+                            <td class="ap-muted">@p.Size</td>
+                            <td>
+                                <span class="ap-color-swatch">
+                                    <span class="ap-swatch-dot" style="background:@ColorToHex(p.Color)"></span>@p.Color
+                                </span>
+                            </td>
+                            <td class="ap-col-actions">
+                                <button class="ap-icon-btn" title="Edit" @onclick="@(() => OpenForm(p))">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                    </svg>
+                                </button>
+                                <button class="ap-icon-btn ap-icon-btn-danger" title="Delete" @onclick="@(() => ConfirmDelete(p))">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                        <path d="M10 11v6M14 11v6" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!FilteredProducts.Any())
+            {
+                <div class="ap-empty">No products found.</div>
+            }
+        </div>
+    }
+
+</div>
+
+@code {
+    private List<Product> products = new();
+    private List<Style> styles = new();
+    private bool Loading = true;
+    private string SearchTerm = "";
+
+    private string GetStyleName(int? styleId)
+    {
+        if (styleId is null) return "—";
+        return styles.FirstOrDefault(s => s.Id == styleId)?.Name ?? "—";
+    }
+
+    private IEnumerable<Product> FilteredProducts =>
+        string.IsNullOrWhiteSpace(SearchTerm)
+            ? products
+            : products.Where(p =>
+                p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        styles = await StyleService.GetAllAsync();
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        Loading = true;
+        products = await ProductService.GetAllAsync();
+        Loading = false;
+    }
+
+    private async Task OpenForm(Product? product)
+    {
+        var isMobile = await JS.InvokeAsync<bool>("eval", "window.innerWidth <= 520");
+
+        var result = await DialogService.OpenAsync<ProductFormDialog>(
+          product is null ? "Add Product" : "Edit Product",
+          new Dictionary<string, object>
+          {
+            { "Existing", product }
+          },
+          new DialogOptions
+          {
+              Width = isMobile ? "100vw" : "789px",
+              Height = isMobile ? "100dvh" : "auto",
+              Top = isMobile ? "0" : "40px",
+              Draggable = !isMobile,
+              Resizable = !isMobile,
+              CloseDialogOnOverlayClick = false,
+              CssClass = "product-dialog"
+          }
+        );
+
+        // Dialog returns true when saved successfully
+        if (result is true)
+        {
+            await LoadProducts();
+            NotificationService.Notify(NotificationSeverity.Success,
+                product is null ? "Product added" : "Product updated");
+        }
+    }
+
+    private async Task ConfirmDelete(Product p)
+    {
+        var confirmed = await DialogService.Confirm(
+            $"Delete \"{p.Name}\"? This cannot be undone.",
+            "Delete Product",
+            new ConfirmOptions { OkButtonText = "Delete", CancelButtonText = "Cancel" }
+        );
+
+        if (confirmed == true)
+        {
+            var ok = await ProductService.DeleteAsync(p.Id);
+            if (ok)
+            {
+                await LoadProducts();
+                NotificationService.Notify(NotificationSeverity.Success, "Product deleted");
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Failed to delete product");
+            }
+        }
+    }
+    private static string ColorToHex(string color)
+    {
+        return color.Trim().ToLowerInvariant() switch
+        {
+            "blue" => "#28548A",
+            "navy" => "#082B4C",
+            "tan" => "#C8A165",
+            "olive" => "#5C6B3F",
+            "rust" => "#C1440E",
+            "grey" => "#8A8272",
+            "gray" => "#8A8272",
+            "black" => "#171717",
+            "brown" => "#6B4A2E",
+            "white" => "#F5F5F5",
+            "red" => "#D93025",
+            "green" => "#2E9E5B",
+            "yellow" => "#E4B72C",
+            _ => "#B08D57"
+        };
+    }
+}

@@ -1,0 +1,338 @@
+﻿@using ECommerce.Entities
+@using ECommerce.ViewModel
+@using ECommerce.Services
+@inject IProductService ProductService
+@inject IStyleService StyleService
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<div class="pf-form">
+
+    <div class="pf-header">
+        <div class="pf-header-icon">
+            @if (IsEdit)
+            {
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                </svg>
+            }
+            else
+            {
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+            }
+        </div>
+        <div>
+            <h3 class="pf-header-title">@(IsEdit ? "Edit Product" : "New Product")</h3>
+            <p class="pf-header-sub">@(IsEdit ? "Update product details below" : "Fill in the details to add a new product")</p>
+        </div>
+    </div>
+
+    <div class="pf-divider"></div>
+
+    <div class="pf-fields">
+        <div class="pf-field">
+            <label class="pf-label">Name <span class="pf-required">*</span></label>
+            <input class="@("pf-input" + (ShowValidation && string.IsNullOrWhiteSpace(Model.Name) ? " pf-input-error" : ""))"
+                   @bind="Model.Name" @bind:event="oninput" placeholder="e.g. Classic Leather Sandal" />
+            @if (ShowValidation && string.IsNullOrWhiteSpace(Model.Name))
+            {
+                <span class="pf-field-error">Product name is required</span>
+            }
+        </div>
+
+        <div class="pf-field">
+            <label class="pf-label">Description</label>
+            <textarea class="pf-input pf-textarea" @bind="Model.Description" rows="2"
+                      placeholder="Short product description..."></textarea>
+        </div>
+
+        <div class="pf-row">
+            <div class="pf-field">
+                <label class="pf-label">Brand</label>
+                <input class="pf-input" @bind="Model.Brand" placeholder="e.g. Klobyte" />
+            </div>
+            <div class="pf-field">
+                <label class="pf-label">Style</label>
+                <select class="pf-input pf-select" @bind="StyleIdStr">
+                    <option value="">-- Select Style --</option>
+                    @foreach (var s in Styles)
+                    {
+                        <option value="@s.Id">@s.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="pf-row">
+            <div class="pf-field">
+                <label class="pf-label">Price (Rs.) <span class="pf-required">*</span></label>
+                <input type="number" min="0" step="1"
+                       class="@("pf-input" + (ShowValidation && Model.Price <= 0 ? " pf-input-error" : ""))"
+                       @bind="Model.Price" />
+            </div>
+            <div class="pf-field">
+                <label class="pf-label">Stock Quantity <span class="pf-required">*</span></label>
+                <input type="number" min="0" step="1"
+                       class="@("pf-input" + (ShowValidation && Model.StockQuantity < 0 ? " pf-input-error" : ""))"
+                       @bind="Model.StockQuantity" />
+            </div>
+        </div>
+
+        <div class="pf-row">
+            <div class="pf-field">
+                <label class="pf-label">Size <span class="pf-hint">(CSV or range)</span></label>
+                <input class="pf-input" @bind="Model.Size" placeholder="e.g. 38,39,40,41" />
+            </div>
+            <div class="pf-field">
+                <label class="pf-label">Color</label>
+                <input class="pf-input" @bind="Model.Color" placeholder="e.g. Tan, Black" />
+            </div>
+        </div>
+
+        <div class="pf-gallery-section">
+            <label class="pf-gallery-label">Product Images <span class="pf-required">*</span></label>
+
+            <div class="pf-gallery-grid">
+                @for (int i = 0; i < Model.ProductImages.Count; i++)
+                {
+                    var index = i;
+                    var img = Model.ProductImages[index];
+                    var isExisting = img.Id != 0;
+
+                    <div class="@("pf-gallery-item" + (isExisting ? " pf-gallery-item-existing" : ""))">
+                        <img src="@GetPreviewSrc(img)" alt="Product image" />
+                        <button type="button" class="pf-gallery-remove" @onclick="@(() => RemoveImage(index))">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                        @if (isExisting)
+                        {
+                            <span class="pf-gallery-tag pf-gallery-existing-tag">Saved</span>
+                        }
+                        else if (index == 0)
+                        {
+                            <span class="pf-gallery-tag pf-gallery-cover-tag">Cover</span>
+                        }
+                    </div>
+                }
+
+                <InputFile OnChange="OnFilesSelected" multiple accept="image/*" class="pf-file-input" id="pf-file-input" style="display:none" />
+                <label for="pf-file-input" class="pf-gallery-add">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>Add Images</span>
+                </label>
+            </div>
+
+            @if (ImageError is not null)
+            {
+                <div class="pf-field-error" style="margin-top:8px">@ImageError</div>
+            }
+            <div class="pf-gallery-hint">First image is the cover. Max @MaxImages images, @(MaxFileSizeBytes / (1024 * 1024)) MB each.</div>
+        </div>
+    </div>
+
+    @if (SaveError is not null)
+    {
+        <div class="pf-save-error">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            @SaveError
+        </div>
+    }
+
+    <div class="pf-actions">
+        <button class="pf-btn-cancel" @onclick="Cancel" disabled="@Saving">Cancel</button>
+        <button class="pf-btn-save" @onclick="Save" disabled="@Saving">
+            @if (Saving)
+            {
+                <span class="pf-spinner"></span>
+            }
+            @(Saving ? "Saving..." : IsEdit ? "Save Changes" : "Add Product")
+        </button>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public Product? Existing { get; set; }
+
+    private bool IsEdit => Existing is not null;
+    private ProductModel Model = new();
+    private List<Style> Styles = new();
+
+    private List<int> OriginalImageIds = new();
+
+    private string? ImageError;
+    private string? SaveError;
+    private bool ShowValidation;
+    private bool Saving;
+
+    private const int MaxImages = 8;
+    private const long MaxFileSizeBytes = 4 * 1024 * 1024;
+
+    private string StyleIdStr
+    {
+        get => Model.StyleId?.ToString() ?? "";
+        set
+        {
+            if (int.TryParse(value, out var id))
+                Model.StyleId = id;
+            else
+                Model.StyleId = null;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Styles = await StyleService.GetAllAsync();
+
+        if (Existing is not null)
+        {
+            Model = new ProductModel
+            {
+                Id = Existing.Id,
+                Name = Existing.Name,
+                Description = Existing.Description,
+                Price = Existing.Price,
+                Size = Existing.Size,
+                Color = Existing.Color,
+                Brand = Existing.Brand,
+                StyleId = Existing.StyleId,
+                StockQuantity = Existing.StockQuantity,
+                CreatedAt = Existing.CreatedAt,
+                ProductImages = new()
+            };
+
+            var existing = await ProductService.GetByIdAsync(Existing.Id);
+            Model.ProductImages = existing ?? new();
+        }
+    }
+
+    private string GetPreviewSrc(ECommerce.ViewModel.ProductImages img)
+    {
+       return img.ImagePath;
+    }
+
+    private async Task OnFilesSelected(InputFileChangeEventArgs e)
+    {
+        ImageError = null;
+
+        var remainingSlots = MaxImages - Model.ProductImages.Count;
+        if (remainingSlots <= 0)
+        {
+            ImageError = $"You can only have up to {MaxImages} images.";
+            return;
+        }
+
+        var files = e.GetMultipleFiles(MaxImages).Take(remainingSlots).ToList();
+        if (e.FileCount > remainingSlots)
+        {
+            ImageError = $"Only {remainingSlots} more image(s) can be added (max {MaxImages} total). The rest were skipped.";
+        }
+
+        foreach (var file in files)
+        {
+            if (file.Size > MaxFileSizeBytes)
+            {
+                ImageError = $"\"{file.Name}\" is larger than {MaxFileSizeBytes / (1024 * 1024)} MB and was skipped.";
+                continue;
+            }
+
+            try
+            {
+                using var stream = file.OpenReadStream(MaxFileSizeBytes);
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                var bytes = ms.ToArray();
+
+                var extension = Path.GetExtension(file.Name).TrimStart('.').ToLowerInvariant();
+                if (string.IsNullOrWhiteSpace(extension)) extension = "jpg";
+
+                Model.ProductImages.Add(new ECommerce.ViewModel.ProductImages
+                {
+                    Id = 0,
+                    ImagePath =  $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}",
+                    Extension = extension
+                });
+            }
+            catch (Exception)
+            {
+                ImageError = $"Could not read \"{file.Name}\". Try a different image.";
+            }
+        }
+    }
+
+    private void RemoveImage(int index)
+    {
+        Model.ProductImages.RemoveAt(index);
+    }
+
+    private bool IsValid() =>
+        !string.IsNullOrWhiteSpace(Model.Name) &&
+        Model.Price > 0 &&
+        Model.StockQuantity >= 0 &&
+        Model.ProductImages.Any();
+
+    private async Task Save()
+    {
+        ShowValidation = true;
+        SaveError = null;
+
+        if (!IsValid())
+        {
+            SaveError = string.IsNullOrWhiteSpace(Model.Name) || Model.Price <= 0
+                ? "Please fill in the required fields."
+                : "Please add at least one product image.";
+            return;
+        }
+
+        var first = Model.ProductImages.FirstOrDefault();
+        if (first is not null && first.Id == 0)
+        {
+            Model.ImagePath = first.ImagePath;
+            Model.Extension = first.Extension;
+        }
+
+        Saving = true;
+        try
+        {
+            if (IsEdit)
+            {
+                var ok = await ProductService.UpdateAsync(Model);
+                if (!ok)
+                {
+                    SaveError = "Update failed. The product may have been removed.";
+                    return;
+                }
+            }
+            else
+            {
+                await ProductService.AddAsync(Model);
+            }
+
+            DialogService.Close(true);
+        }
+        catch (Exception ex)
+        {
+            SaveError = $"Something went wrong: {ex.Message}";
+        }
+        finally
+        {
+            Saving = false;
+        }
+    }
+
+    private void Cancel() => DialogService.Close(false);
+}

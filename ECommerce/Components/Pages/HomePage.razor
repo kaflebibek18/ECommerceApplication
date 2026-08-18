@@ -1,0 +1,327 @@
+﻿@page "/"
+@inject ECommerce.Services.IProductService ProductService
+@inject ECommerce.Services.IStyleService StyleService
+@inject NavigationManager Nav
+
+<div class="cw-page">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <button class="site-hamburger" @onclick="ToggleMobileMenu" aria-label="Menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <div class="site-header-left">
+                <a href="/" class="site-logo">
+                    <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </a>
+                    <p style="color:white">comfy wear</p>
+                </a>
+
+                <nav class="site-nav @(_mobileMenuOpen ? "site-nav-open" : "")">
+                    <a class="site-nav-link active" href="/" @onclick="@(() => _mobileMenuOpen = false)">Home</a>
+                    <a class="site-nav-link" href="/items" @onclick="@(() => _mobileMenuOpen = false)">Shop</a>
+                </nav>
+            </div>
+
+            <div class="site-header-right">
+                <div class="site-search">
+                    <svg class="site-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text"
+                           class="site-search-input"
+                           placeholder="Search shoes..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput" />
+                </div>
+                <AuthStatus />
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HERO ==================== -->
+   @*  <section class="cw-hero">
+        <div class="cw-hero-content">
+            <span class="cw-hero-badge">New Season 2026</span>
+            <h1 class="cw-hero-title">
+                Step Into<br />
+                <span class="cw-hero-accent">Comfort</span>
+            </h1>
+            <p class="cw-hero-sub">
+                Handcrafted footwear built for everyday adventures.
+                Premium leather, timeless design, factory-direct prices.
+            </p>
+            <div class="cw-hero-actions">
+                <button class="cw-btn cw-btn-primary" @onclick="@(() => Nav.NavigateTo("/items"))">
+                    Shop Now
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+                <button class="cw-btn cw-btn-outline" @onclick="@(() => Nav.NavigateTo("/sandals"))">
+                    View Collection
+                </button>
+            </div>
+            <div class="cw-hero-stats">
+                <div class="cw-stat">
+                    <span class="cw-stat-num">500+</span>
+                    <span class="cw-stat-label">Happy Customers</span>
+                </div>
+                <div class="cw-stat-divider"></div>
+                <div class="cw-stat">
+                    <span class="cw-stat-num">100%</span>
+                    <span class="cw-stat-label">Leather</span>
+                </div>
+                <div class="cw-stat-divider"></div>
+                <div class="cw-stat">
+                    <span class="cw-stat-num">Free</span>
+                    <span class="cw-stat-label">Delivery</span>
+                </div>
+            </div>
+        </div>
+        <div class="cw-hero-visual">
+            <div class="cw-hero-circle"></div>
+            <div class="cw-hero-shape">
+                <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M200 40 C280 40 360 120 360 200 C360 280 280 360 200 360 C120 360 40 280 40 200 C40 120 120 40 200 40Z" fill="#E8DCC8" opacity="0.5"/>
+                    <ellipse cx="200" cy="240" rx="120" ry="20" fill="#33422E" opacity="0.08"/>
+                    <path d="M140 200 Q140 160 180 155 L260 150 Q290 150 290 180 Q290 210 260 215 L160 225 Q140 225 140 200Z" fill="#33422E" opacity="0.85"/>
+                    <path d="M145 195 Q145 165 175 162 L255 158 Q280 158 280 182 Q280 206 255 208 L165 218 Q145 218 145 195Z" fill="#D98E2B" opacity="0.3"/>
+                </svg>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- ==================== TRUST STRIP ==================== -->
+    <div class="cw-trust-strip">
+        <div class="cw-trust-inner">
+            @foreach (var item in TrustItems)
+            {
+                <span class="cw-trust-item">
+                    <svg class="cw-trust-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        @((MarkupString)item.SvgPath)
+                    </svg>
+                    @item.Label
+                </span>
+            }
+        </div>
+    </div>
+
+    <!-- ==================== CATEGORIES ==================== -->
+    <section class="cw-section">
+        <div class="cw-section-header">
+            <span class="cw-eyebrow">Browse</span>
+            <h2 class="cw-section-title">Products by Style</h2>
+            <div class="cw-rule"></div>
+        </div>
+
+        <div class="cw-category-grid">
+            @foreach (var style in Styles)
+            {
+                <button type="button" class="cw-category-card" @onclick="@(() => GoToCategory(style.Slug))">
+                    <div class="cw-category-icon">
+                        <svg viewBox="0 0 48 48" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                            @((MarkupString)style.IconPath)
+                        </svg>
+                    </div>
+                    <span class="cw-category-name">@style.Name</span>
+                    <span class="cw-category-count">@style.Count items</span>
+                </button>
+            }
+        </div>
+    </section>
+
+    <!-- ==================== FEATURED PRODUCTS ==================== -->
+    @if (FeaturedProducts.Any())
+    {
+        <section class="cw-section cw-section-alt">
+           @*  <div class="cw-section-header">
+                <span class="cw-eyebrow">Featured</span>
+                <h2 class="cw-section-title">Popular Picks</h2>
+                <div class="cw-rule"></div>
+            </div> *@
+
+           @*  <div class="cw-product-grid">
+                @foreach (var p in FeaturedProducts)
+                {
+                    var inStock = p.StockQuantity > 0;
+                    <div class="cw-product-card" @onclick="@(() => Nav.NavigateTo($"/product/{p.Id}"))">
+                        <div class="cw-product-img">
+                            @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                            {
+                                <img src="@p.ImagePath" alt="@p.Name" />
+                            }
+                            else
+                            {
+                                <div class="cw-product-placeholder">
+                                    <svg viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="8" y="8" width="48" height="48" rx="4" />
+                                        <circle cx="22" cy="24" r="5" />
+                                        <path d="M8 44l14-14 10 10 8-8 16 16" />
+                                    </svg>
+                                </div>
+                            }
+                            @if (!inStock)
+                            {
+                                <span class="cw-product-tag cw-tag-sold">Sold Out</span>
+                            }
+                            else if (IsNew(p))
+                            {
+                                <span class="cw-product-tag cw-tag-new">New</span>
+                            }
+                        </div>
+                        <div class="cw-product-body">
+                            @if (!string.IsNullOrWhiteSpace(p.Brand))
+                            {
+                                <span class="cw-product-brand">@p.Brand</span>
+                            }
+                            <span class="cw-product-name">@p.Name</span>
+                            <div class="cw-product-footer">
+                                <span class="cw-product-price">Rs. @p.Price.ToString("N0")</span>
+                                <span class="cw-product-stock @(inStock ? "cw-stock-in" : "cw-stock-out")">
+                                    @(inStock ? "In Stock" : "Out")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div> *@
+
+            <div class="cw-section-cta">
+                <button class="cw-btn cw-btn-primary" @onclick="@(() => Nav.NavigateTo("/items"))">
+                    View All Products
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+    }
+
+    <!-- ==================== NEWSLETTER / CTA BANNER ==================== -->
+  @*   <section class="cw-banner">
+        <div class="cw-banner-inner">
+            <div class="cw-banner-text">
+                <h2 class="cw-banner-title">Get 10% Off Your First Order</h2>
+                <p class="cw-banner-sub">Sign up for our newsletter and never miss a drop.</p>
+            </div>
+            <div class="cw-banner-form">
+                <input type="email" class="cw-banner-input" placeholder="Enter your email" />
+                <button class="cw-btn cw-btn-gold">Subscribe</button>
+            </div>
+        </div>
+    </section> *@
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <div class="site-footer-brand">
+                <a href="/" class="site-logo">
+                    <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </a>
+                    comfy wear
+                </a>
+                <p class="site-footer-desc">Handcrafted footwear for everyday adventures. Built to last, designed to impress.</p>
+            </div>
+            <div class="site-footer-col">
+                <h4>Shop</h4>
+                <a href="/items">All Products</a>
+            </div>
+            <div class="site-footer-col">
+                <h4>Help</h4>
+                <a href="#">Shipping Info</a>
+                <a href="#">Returns</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="site-footer-col">
+                <h4>Follow Us</h4>
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer">Facebook</a>
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer">TikTok</a>
+            </div>
+        </div>
+       @*  <div class="site-footer-bottom">
+            &copy; 2026 Comfy Wear. All rights reserved.
+        </div> *@
+    </footer>
+
+</div>
+
+@code {
+    private string SearchTerm = "";
+    private bool _mobileMenuOpen = false;
+    private List<ECommerce.Entities.Product> FeaturedProducts = new();
+
+    private record CategoryTile(string Name, string Slug, string IconPath, int Count);
+    private record TrustInfo(string SvgPath, string Label);
+
+    private List<TrustInfo> TrustItems = new()
+    {
+        new("<path d=\"M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>", "Delivery all over Nepal"),
+        new("<rect x=\"1\" y=\"4\" width=\"22\" height=\"16\" rx=\"2\"/><line x1=\"1\" y1=\"10\" x2=\"23\" y2=\"10\"/>", "Cash on Delivery"),
+        new("<path d=\"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/>", "Factory Direct"),
+        new("<path d=\"M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z\"/><line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/>", "Retail & Wholesale"),
+    };
+
+    private List<CategoryTile> Styles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allProducts = await ProductService.GetAllAsync();
+        var allStyles = await StyleService.GetAllAsync();
+
+        FeaturedProducts = allProducts.Where(p => p.StockQuantity > 0).Take(4).ToList();
+
+        Styles = allStyles.Select(s => new CategoryTile(
+            s.Name,
+            s.Slug,
+            s.Name.ToLower() switch
+            {
+                "flats" => "<path d=\"M6 32 Q6 20 18 18 L42 16 Q52 16 52 26 Q52 34 42 36 L14 38 Q6 38 6 32Z\"/><line x1=\"14\" y1=\"38\" x2=\"14\" y2=\"44\"/><line x1=\"38\" y1=\"36\" x2=\"38\" y2=\"44\"/>",
+                "sandals" => "<path d=\"M8 30 Q8 18 20 16 L40 14 Q50 14 50 24 Q50 32 40 34 L12 36 Q8 36 8 30Z\"/><path d=\"M20 16 L24 8 M36 14 L34 6\"/><circle cx=\"24\" cy=\"8\" r=\"2\"/><circle cx=\"34\" cy=\"6\" r=\"2\"/>",
+                "heels" => "<path d=\"M14 28 Q14 18 24 16 L40 15 Q48 15 48 22 Q48 30 40 31 L18 33 Q14 33 14 28Z\"/><path d=\"M18 33 L16 44 L22 44 L22 33\"/><line x1=\"16\" y1=\"44\" x2=\"22\" y2=\"44\"/>",
+                "boots" => "<path d=\"M14 38 L14 14 Q14 8 20 8 L36 8 Q42 8 42 14 L42 38\"/><path d=\"M14 38 L8 38 L8 44 L46 44 L46 38 L42 38\"/><path d=\"M14 22 L42 22\"/><circle cx=\"14\" cy=\"14\" r=\"1.5\"/><circle cx=\"14\" cy=\"18\" r=\"1.5\"/>",
+                "slippers" => "<path d=\"M10 32 Q10 22 22 20 L42 19 Q50 19 50 27 Q50 34 42 35 L14 36 Q10 36 10 32Z\"/><path d=\"M28 20 Q30 14 34 12\"/><circle cx=\"34\" cy=\"12\" r=\"1.5\"/>",
+                _ => "<path d=\"M10 32 Q10 22 22 20 L42 19 Q50 19 50 27 Q50 34 42 35 L14 36 Q10 36 10 32Z\"/>"
+            },
+            allProducts.Count(p => p.StyleId == s.Id)
+        )).ToList();
+    }
+
+    private void ToggleMobileMenu()
+    {
+        _mobileMenuOpen = !_mobileMenuOpen;
+    }
+
+    private static bool IsNew(ECommerce.Entities.Product p)
+    {
+        return (DateTime.UtcNow - p.CreatedAt).TotalDays <= 14;
+    }
+
+    private void GoToCategory(string slug)
+    {
+        if (slug == "all")
+            Nav.NavigateTo("/items");
+        else
+            Nav.NavigateTo($"/items?style={slug}");
+    }
+}

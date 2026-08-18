@@ -1,0 +1,336 @@
+﻿@page "/items"
+@using ECommerce.Entities
+@inject ECommerce.Services.IProductService ProductService
+@inject ECommerce.Services.IStyleService StyleService
+@inject NavigationManager Nav
+
+<div class="mk-page">
+
+    <!-- ================= HEADER ================= -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <button class="site-hamburger" @onclick="ToggleMobileMenu" aria-label="Menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <div class="site-header-left">
+                <a href="/" class="site-logo">
+                    <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </a>
+                    <p style="color:white;margin-top: 15px;">comfy wear</p>
+                </a>
+
+                <nav class="site-nav @(_mobileMenuOpen ? "site-nav-open" : "")">
+                    <a class="site-nav-link" href="/" @onclick="@(() => _mobileMenuOpen = false)">Home</a>
+                    <a class="site-nav-link active" href="/items" @onclick="@(() => _mobileMenuOpen = false)">Shop</a>
+                </nav>
+            </div>
+
+            <div class="site-header-right">
+                <div class="site-search">
+                    <svg class="site-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text"
+                           class="site-search-input"
+                           placeholder="Search shoes..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput" />
+                </div>
+                <AuthStatus />
+            </div>
+        </div>
+    </header>
+
+    <!-- FLOATING BACK BUTTON -->
+    <button class="mk-floating-back" @onclick="@(() => Nav.NavigateTo("/"))">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+        </svg>
+    </button>
+
+    <!-- ================= PRODUCTS ================= -->
+    <main class="mk-body">
+
+       @*  @if (!string.IsNullOrWhiteSpace(StyleSlug))
+        {
+            <div class="mk-filter-bar">
+                <span class="mk-filter-label">
+                    Showing: <strong>@StyleName</strong>
+                </span>
+                <button class="mk-filter-clear" @onclick="ClearStyleFilter">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    Clear Filter
+                </button>
+            </div>
+        } *@
+
+        @if (FilteredProducts.Any())
+        {
+            <div class="mk-grid">
+
+                @foreach (var p in FilteredProducts)
+                {
+                    var inStock = p.StockQuantity > 0;
+
+                    <div class="mk-card"
+                         @onclick="@(() => Go(p.Id))">
+
+                        <!-- IMAGE -->
+                        <div class="mk-media">
+
+                            <!-- New / Sold Out -->
+                            @if (!inStock)
+                            {
+                                <span class="mk-tag mk-tag-out">
+                                    Sold Out
+                                </span>
+                            }
+                            else if (IsNew(p))
+                            {
+                                <span class="mk-tag mk-tag-new">
+                                    New
+                                </span>
+                            }
+
+                            <!-- Favorite -->
+                            <button class="mk-favorite"
+                                    @onclick:stopPropagation="true">
+
+                                <svg viewBox="0 0 24 24"
+                                     width="17"
+                                     height="17"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.5">
+
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- Product Image -->
+                            @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                            {
+                                <img src="@p.ImagePath"
+                                     alt="@p.Name"
+                                     class="@(!inStock ? "mk-img-muted" : "")" />
+                            }
+                            else
+                            {
+                                <div class="mk-img-fallback">
+
+                                    <svg viewBox="0 0 64 64"
+                                         width="42"
+                                         height="42"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.5">
+
+                                        <rect x="8"
+                                              y="8"
+                                              width="48"
+                                              height="48"
+                                              rx="4" />
+
+                                        <circle cx="22"
+                                                cy="24"
+                                                r="5" />
+
+                                        <path d="M8 44l14-14 10 10 8-8 16 16" />
+
+                                    </svg>
+
+                                </div>
+                            }
+
+                        </div>
+
+
+                        <!-- PRODUCT INFORMATION -->
+                        <div class="mk-info">
+
+                            <!-- Brand -->
+                            @if (!string.IsNullOrWhiteSpace(p.Brand))
+                            {
+                                <div class="mk-brand">
+                                    @p.Brand
+                                </div>
+                            }
+
+                            <!-- Product Name -->
+                            <div class="mk-name">
+                                @p.Name
+                            </div>
+
+                            <!-- Price -->
+                            @* <div class="mk-price">
+                                Rs.@p.Price.ToString("N0")
+                            </div> *@
+
+                            <!-- Quantity / Stock -->
+                            @* <div class="mk-stock-row">
+
+                                <div class="@($"mk-stock {(inStock ? "mk-stock-in" : "mk-stock-out")}")">
+
+                                    <span class="mk-stock-dot"></span>
+
+                                    @(inStock ? "In stock" : "Out of stock")
+
+                                </div>
+
+                                @if (inStock)
+                                {
+                                    <div class="mk-quantity">
+                                        @p.StockQuantity
+                                    </div>
+                                }
+
+                            </div> *@
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="mk-empty">
+
+                <div class="mk-empty-icon">
+                    <svg viewBox="0 0 24 24"
+                         width="35"
+                         height="35"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5">
+
+                        <circle cx="11"
+                                cy="11"
+                                r="7" />
+
+                        <line x1="21"
+                              y1="21"
+                              x2="16.65"
+                              y2="16.65" />
+
+                    </svg>
+                </div>
+
+                <div>
+                    @(string.IsNullOrWhiteSpace(StyleName)
+                        ? $"No products match \"{SearchTerm}\""
+                        : $"No {StyleName.ToLower()} products found")
+                </div>
+
+            </div>
+        }
+
+    </main>
+
+</div>
+
+
+@code {
+
+    private List<Product> products = new();
+    private List<Style> styles = new();
+
+    private string SearchTerm = "";
+    private string? StyleSlug;
+    private string StyleName = "";
+    private bool _mobileMenuOpen = false;
+
+    private IEnumerable<Product> FilteredProducts
+    {
+        get
+        {
+            var query = products.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(StyleSlug) && styles.Any())
+            {
+                var matchedStyle = styles.FirstOrDefault(s =>
+                    s.Slug.Equals(StyleSlug, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedStyle is not null)
+                {
+                    StyleName = matchedStyle.Name;
+                    query = query.Where(p => p.StyleId == matchedStyle.Id);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                query = query.Where(p =>
+                    (!string.IsNullOrWhiteSpace(p.Name) &&
+                     p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+                    ||
+                    (!string.IsNullOrWhiteSpace(p.Brand) &&
+                     p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            return query;
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        styles = await StyleService.GetAllAsync();
+
+        var uri = new Uri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        StyleSlug = query["style"];
+
+        products = await ProductService.GetAllAsync();
+    }
+
+    private void ClearStyleFilter()
+    {
+        StyleSlug = null;
+        StyleName = "";
+        Nav.NavigateTo("/items");
+    }
+
+
+    private void ApplySearch()
+    {
+        // Filtering is reactive because SearchTerm is bound with oninput.
+    }
+
+
+    private static bool IsNew(Product p)
+    {
+        return (DateTime.UtcNow - p.CreatedAt).TotalDays <= 14;
+    }
+
+
+    private void Go(int id)
+    {
+        Nav.NavigateTo($"/product/{id}?from={Uri.EscapeDataString(Nav.Uri)}");
+    }
+
+    private void ToggleMobileMenu()
+    {
+        _mobileMenuOpen = !_mobileMenuOpen;
+    }
+
+}
