@@ -66,9 +66,21 @@ app.UseHttpsRedirection();
 // Static files early, before auth/antiforgery — these don't need either.
 app.MapStaticAssets();
 app.UseStaticFiles();
+
+// Resolve the Images directory dynamically so this works on both Windows (local dev,
+// e.g. D:\Images) and Linux (Railway containers). Falls back to a folder relative to
+// the app's base directory, and creates it if it doesn't exist yet.
+var imagesPath = Environment.GetEnvironmentVariable("IMAGES_PATH")
+    ?? Path.Combine(AppContext.BaseDirectory, "Images");
+
+if (!Directory.Exists(imagesPath))
+{
+    Directory.CreateDirectory(imagesPath);
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"D:\Images"),
+    FileProvider = new PhysicalFileProvider(imagesPath),
     RequestPath = "/Images"
 });
 

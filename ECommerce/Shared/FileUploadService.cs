@@ -31,7 +31,10 @@
             if (file != null)
             {
                 var streamData = new MemoryStream(file);
-                var UploadFolder = Path.Combine( "D://Images");
+                // Resolve dynamically so this works on both Windows (local dev) and Linux
+                // (Railway containers). Mirrors the path used for serving in Program.cs.
+                var UploadFolder = Environment.GetEnvironmentVariable("IMAGES_PATH")
+                    ?? Path.Combine(AppContext.BaseDirectory, "Images");
                 //var FileName = Guid.NewGuid().ToString() + "_";
                 var FullPath = Path.Combine(UploadFolder, FileName);
                 if (!Directory.Exists(UploadFolder))
