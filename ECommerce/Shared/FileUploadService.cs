@@ -31,10 +31,11 @@
             if (file != null)
             {
                 var streamData = new MemoryStream(file);
-                // Resolve dynamically so this works on both Windows (local dev) and Linux
-                // (Railway containers). Mirrors the path used for serving in Program.cs.
+                // Defaults to /app/images so that a persistent volume mounted at that path
+                // on Railway will store all uploaded images across deployments. Mirrors the
+                // path used for serving in Program.cs. IMAGES_PATH can override this.
                 var UploadFolder = Environment.GetEnvironmentVariable("IMAGES_PATH")
-                    ?? Path.Combine(AppContext.BaseDirectory, "Images");
+                    ?? "/app/images";
                 //var FileName = Guid.NewGuid().ToString() + "_";
                 var FullPath = Path.Combine(UploadFolder, FileName);
                 if (!Directory.Exists(UploadFolder))

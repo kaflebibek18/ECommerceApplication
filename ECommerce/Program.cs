@@ -67,11 +67,11 @@ app.UseHttpsRedirection();
 app.MapStaticAssets();
 app.UseStaticFiles();
 
-// Resolve the Images directory dynamically so this works on both Windows (local dev,
-// e.g. D:\Images) and Linux (Railway containers). Falls back to a folder relative to
-// the app's base directory, and creates it if it doesn't exist yet.
+// Resolve the Images directory. Defaults to /app/images so that a persistent volume
+// mounted at that path on Railway will store all uploaded images across deployments.
+// The IMAGES_PATH environment variable can still be used to override this if needed.
 var imagesPath = Environment.GetEnvironmentVariable("IMAGES_PATH")
-    ?? Path.Combine(AppContext.BaseDirectory, "Images");
+    ?? "/app/images";
 
 if (!Directory.Exists(imagesPath))
 {
